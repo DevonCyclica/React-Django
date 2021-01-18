@@ -25,7 +25,7 @@ SECRET_KEY = '463hzk*onkb4h&+j@mof$wc(20t$$l17w#(v8-6ipzq7m=$a=j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['react-django.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['react-django.herokuapp.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -123,10 +123,11 @@ USE_TZ = True
 
 STATIC_URL = '/assets/'
 
+print(BASE_DIR)
+
 STATICFILES_DIRS = [
   os.path.join(BASE_DIR, 'build'),
+  os.path.join(BASE_DIR, 'dist'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'

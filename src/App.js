@@ -3,6 +3,8 @@ import reactLogo from './logo-react.svg';
 import djangoLogo from './logo-django.svg';
 import './App.css';
 
+import TestComponent from './TestComponent';
+
 class App extends Component {
   render() {
     return (
@@ -15,6 +17,8 @@ class App extends Component {
         <p className="App-intro">
           I'm a blank canvas waiting for a coder's touch!
         </p>
+        <TestComponent/>
+        <p>test</p>
       </div>
     );
   }
