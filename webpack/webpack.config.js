@@ -59,10 +59,6 @@ module.exports = {
           'file-loader'
         ]
       },
-      {
-        test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
-      },
       // LESS/CSS
       {
         test: /\.less$/,
@@ -75,11 +71,12 @@ module.exports = {
           },
           {
             loader: 'less-loader',
-            options: {
-              javascriptEnabled: true,
-            },
           },
         ],
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
       },
     ],
   },

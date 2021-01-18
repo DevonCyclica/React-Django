@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+import "./TestComponent.less";
+
 function TestComponent(props) {
   const [whatever, setWhatever] = useState(null);
 
@@ -11,7 +13,7 @@ function TestComponent(props) {
   }, []);
 
   return (
-    <div>
+    <div className="test-component">
       blah
     </div>
   );
