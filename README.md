@@ -4,7 +4,7 @@ Simple setup for a React-Django web app. See tutorial here: https://alphacoder.x
 ## Setup
 - Download/clone repo.
 - Create and activate a virtual environment.
-- - `pip install virtyualenv`
+- - `pip install virtualenv`
 - - `python3 -m venv env`
 - Activate virtualenv
 - - (Windows) `.\env\Scripts\activate`
