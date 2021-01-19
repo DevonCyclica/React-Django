@@ -6,9 +6,9 @@ else
 	sudo apt install npm
 fi
 
-pip install virtualenv
-python -m venv env
+pip3 install virtualenv
+python3 -m venv env
 source env/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
+pip3 install -r requirements.txt
+python3 manage.py migrate
 npm install
