@@ -23,14 +23,14 @@ Simple setup for a React-Django web app. See tutorial here: https://alphacoder.x
 
 ## Alternative Setup for Windows:
 - Download/clone repo.
-- Download/install Docker.
+- Download/install Docker https://docs.docker.com/docker-for-windows/install/
 - In a shell, navigate to repo
 - Build docker container `docker build -t test_repo .`
 
 ## Run
 - Run server:
 - - (Normally) `npm start & python3 manage.py runserver 0:7501`.
-- - (Using docker method for windows) 
+- - (Using docker method for windows)
 - - - (using native shell) `docker run -it -p 7501:7501 -v "%cd%"\src:/opt/app/src -v "%cd%"\sampleapp:/opt/app/sampleapp test_repo`
 - - - (using unix style shell [might be able to omit 'winpty' from some, but this works on git bash]) `winpty docker run -it -p 7501:7501 -v "$(pwd)"/src:/opt/app/src -v "$(pwd)"/sampleapp:/opt/app/sampleapp test_repo`
 - Go to page in browser at `localhost:7501`, and then modify code as desired!
