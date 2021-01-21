@@ -1,0 +1,20 @@
+.list {
+	display: flex;
+	flex-direction: row;
+	height: 95vh;
+
+	> div {
+		width: 33.33333%;
+		overflow: scroll;
+		border: 3px solid black;
+		font-size: 26px;
+
+		p {
+			margin: 5px;
+			&.clickable:hover {
+				text-decoration: underline;
+				cursor: pointer;
+			}
+		}
+	}
+}

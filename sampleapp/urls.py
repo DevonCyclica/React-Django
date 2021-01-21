@@ -7,4 +7,5 @@ urlpatterns = [
   path('foo_list/', views.foo_list),
   path('bar_detail/', views.bar_detail),
   path('bar_list/', views.bar_list),
+  path('similar_bars/', views.similar_bars),
 ]
