@@ -4,14 +4,13 @@ import axios from 'axios';
 import "./List.less";
 
 function List(props) {
-  const [foos, setFoos] = useState([]);
+  const [foos, setFoos] = useState(null);
   const [selectedFoo, setSelectedFoo] = useState(null);
   const [similarBars, setSimilarBars] = useState([]);
 
   useEffect(() =>{
     axios.get('api/foo_list/').then((res) => {
-      console.log(res);
-      setFoos(res.data.foos);
+      setFoos(res.data);
     });
   }, []);
 
@@ -24,19 +23,32 @@ function List(props) {
   return (
     <div className="list">
       <div>
-        {foos.filter((foo) => foo.name.includes(props.filter)).map((foo) => (
-          <p className="clickable" onClick={() => setSelectedFoo(foo)}>{foo.name}</p>
-        ))}
+        <div>
+          <p>All Foos</p>
+        </div>
+        <div>
+          <p>Related Bars</p>
+        </div>
+        <div>
+          <p>Similar Bars</p>
+        </div>
       </div>
       <div>
-        {selectedFoo && selectedFoo.bars.map((bar) => (
-          <p className="clickable" onClick={() => getSimilarBars(bar.name)}>{bar.name}</p>
-        ))}
-      </div>
-      <div>
-        {similarBars.map((bar) => (
-          <p>{bar.name}</p>
-        ))}
+        <div>
+          {foos.map((foo) => (
+            <p className="clickable" onClick={() => setSelectedFoo(foo.name)}>{foo.name}</p>
+          ))}
+        </div>
+        <div>
+          {selectedFoo && selectedFoo.bars.map((bar) => (
+            <p className="clickable" onClick={() => getSimilarBars(bar.id)}>{bar.name}-{bar.foo__name}</p>
+          ))}
+        </div>
+        <div>
+          {similarBars.map((bar) => (
+            <p>{bar.name}</p>
+          ))}
+        </div>
       </div>
     </div>
   );

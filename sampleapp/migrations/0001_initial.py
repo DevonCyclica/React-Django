@@ -19,7 +19,7 @@ def fill_models(apps, schema):
 
         for _ in range(10):
             extra_name = ''.join(random.choices(string.ascii_uppercase + string.digits, k=2))
-            bars.append(Bar(name=extra_name+name, foo_id=i))
+            bars.append(Bar(name=extra_name, foo_id=i))
 
     Foo.objects.bulk_create(foos)
     Bar.objects.bulk_create(bars)
