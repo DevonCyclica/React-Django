@@ -26,5 +26,7 @@ def bar_list(request):
 	pass
 
 def similar_bars(request):
-	bars = Bar.objects.filter(name=request.GET.get('barName')).values('id', 'name')
+	reverse = request.GET.get('reverse')
+	name = request.GET.get('barName') if reverse == '1' else request.GET.get('barName')[::-1]
+	bars = Bar.objects.filter(name=name).values('id', 'name')
 	return JsonResponse({'bars': list(bars)})
