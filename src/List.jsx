@@ -7,7 +7,7 @@ function List(props) {
   const [foos, setFoos] = useState(null);
   const [selectedFoo, setSelectedFoo] = useState(null);
   const [similarBars, setSimilarBars] = useState([]);
-  const [selectedBar, setSelectedBar] = useState(null);
+  const [selectedBarId, setSelectedBarId] = useState(null);
 
   useEffect(() =>{
     axios.get('api/foo_list/').then((res) => {
@@ -15,11 +15,11 @@ function List(props) {
     });
   }, []);
 
-  const getSimilarBars = (barId, barName) => {
-    axios.get(`api/similar_bars/?barName=${barId}&reversed=${selectedBar.id === barId ? 1 : 0}`).then((res) => {
+  const getSimilarBars = (barName, barId) => {
+    axios.get(`api/similar_bars/?barName=${barName}&reverse=${selectedBarId === barId ? 1 : 0}`).then((res) => {
       setSimilarBars(res.data.bars);
     });
-    setSelectedBar(bar);
+    setSelectedBarId(barId);
   };
 
   return (
@@ -43,7 +43,7 @@ function List(props) {
         </div>
         <div>
           {selectedFoo && selectedFoo.bars.map((bar) => (
-            <p className="clickable" onClick={() => getSimilarBars(bar.name, bar.id)}>{bar.name}-{bar.foo__name}</p>
+            <p className="clickable" onClick={() => getSimilarBars(bar.id, bar.name)}>{bar.name}-{bar.foo__name}</p>
           ))}
         </div>
         <div>
