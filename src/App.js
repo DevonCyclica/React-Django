@@ -11,7 +11,7 @@ function App(props) {
   return (
     <div className="App">
       <Filter filter={filter} setFilter={setFilter} />
-      <List />
+      <List filter={filter} />
     </div>
   );
 }
