@@ -6,18 +6,20 @@ import "./Header.less";
 function Header(props) {
   const addNewWord = () => {
     props.setLoading(true);
+    props.setError(null);
     axios.post('api/add_new_word/', {newWord: props.filter}).then((res) => {
       props.updateAndSelectWord(res.data.word);
       props.setLoading(false);
     }).catch((error) => {
-      console.log(error);
+      props.setError(error.response.data);
       props.setLoading(false);
     });
   }
   return (
     <div className="header">
       <div>
-        {props.loading ? 'loading...' : ''}
+        {props.loading ? <p className="loading">loading...</p> : ''}
+        {props.error ? <p className="error">Error: {props.error}</p> : ''}
       </div>
       <div>
         <input type="text" value={props.filter} onChange={(event) => props.setFilter(event.target.value.toLowerCase())}/>

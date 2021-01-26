@@ -7,6 +7,7 @@ import List from './List';
 
 function App(props) {
   const [filter, setFilter] = useState('');
+  const [error, setError] = useState(null);
   const [selectedWord, setSelectedWord] = useState(null);
   const [selectedPartOfSpeech, setSelectedPartOfSpeech] = useState(null);
   const [words, setWords] = useState([]);
@@ -34,6 +35,8 @@ function App(props) {
         selectedWord={selectedWord}
         loading={loading}
         setLoading={setLoading}
+        error={error}
+        setError={setError}
       />
       <List
         filter={filter}
@@ -44,6 +47,7 @@ function App(props) {
         selectedPartOfSpeech={selectedPartOfSpeech}
         setSelectedPartOfSpeech={setSelectedPartOfSpeech}
         setLoading={setLoading}
+        setError={setError}
       />
     </div>
   );

@@ -5,11 +5,13 @@ import "./List.less";
 
 function List(props) {
   const convertToRealWord = (word) => {
+    props.setError(null);
     props.setLoading(true);
     axios.post('api/convert_word/', {word: word.id}).then((res) => {
       props.setLoading(false);
       props.updateAndSelectWord(res.data.word);
     }).catch((error) => {
+      props.setError(error.response.data);
       props.setLoading(false);
     });
   };
@@ -17,7 +19,7 @@ function List(props) {
   const setSelectedSimilar = (word) => {
     const filteredWord = props.words.filter((allWord) => allWord.id === word.id);
     if (filteredWord.length > 0) {  // word already exists as full word
-      props.setSelectedWord(word);
+      props.setSelectedWord(filteredWord[0]);
     } else {
       convertToRealWord(word);
     }
