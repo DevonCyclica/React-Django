@@ -16,7 +16,7 @@ function List(props) {
 
   const setSelectedSimilar = (word) => {
     const filteredWord = props.words.filter((allWord) => allWord.id === word.id);
-    if (filteredWord.length > 0) {
+    if (filteredWord.length > 0) {  // word already exists as full word
       props.setSelectedWord(word);
     } else {
       convertToRealWord(word);
@@ -28,22 +28,26 @@ function List(props) {
       <div>
         <div>
           <p>Words</p>
+          <p className="sub-header">Select Word to update other columns</p>
         </div>
         <div>
           <p>Synonyms</p>
+          <p className="sub-header">Select Synonym to update selected word and potentially add to database</p>
         </div>
         <div>
           <p>Antonyms</p>
+          <p className="sub-header">Select Antonym to update selected word and potentially add to database</p>
         </div>
         <div>
           <p>Part of speech</p>
+          <p className="sub-header">Select Part of Speech to filter Word column</p>
         </div>
       </div>
       <div>
         <div>
-          {props.words.filter(
+          {props.words.filter( // filter by word filter
             (word) => word.word.includes(props.filter)
-          ).filter(
+          ).filter( // filter by part of speech
             (word) => word.part_of_speech.filter(
               (partOfSpeech) => partOfSpeech.category === props.selectedPartOfSpeech || props.selectedPartOfSpeech === null
             ).length > 0
