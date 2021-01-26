@@ -33,15 +33,10 @@ def fill_models(apps, schema):
 
         parts_of_speech.update(list(dictionary.meaning(word).keys()))
 
-    print(parts_of_speech)
-
     for k, pos in enumerate(parts_of_speech):
         if pos not in pos_id_map:
-            print(pos)
             pos_objs.append(PartOfSpeech(category=pos, id=k))
             pos_id_map[pos] = k
-
-    print(pos_objs)
 
     synonym_through = Word.synonyms.through
     antonym_through = Word.antonyms.through
