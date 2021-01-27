@@ -18,9 +18,8 @@ def word_list(request):
 		'words': [{
 			'word': word.word,
 			'synonyms': list(word.synonyms.values('id', 'word')),
-			'antonyms': list(word.antonyms.values('id', 'word')),
+			'antonyms': list(word.synonyms.values('id', 'word')),
 			'part_of_speech': list(word.part_of_speech.values('id', 'category')),
-			'id': word.id
 		} for word in words]
 	})
 
@@ -99,7 +98,7 @@ def add_new_word(request):
 	word = json.loads(request.body)['newWord']
 
 	dictionary = PyDictionary()
-	if not dictionary.meaning(word):  # check that the word is actually a word
+	if dictionary.meaning(word):  # check that the word is actually a word
 		return HttpResponseBadRequest("That is not a real word!")
 
 	try:  # try to create the word and ensure it doesn't already exist

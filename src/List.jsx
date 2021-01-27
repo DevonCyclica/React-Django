@@ -19,7 +19,7 @@ function List(props) {
   const setSelectedSimilar = (word) => {
     const filteredWord = props.words.filter((allWord) => allWord.id === word.id);
     if (filteredWord.length > 0) {  // word already exists as full word
-      props.setSelectedWord(filteredWord[0]);
+      props.setSelectedWord(word);
     } else {
       convertToRealWord(word);
     }
@@ -86,7 +86,6 @@ function List(props) {
           {props.selectedWord && props.selectedWord.part_of_speech.map((partOfSpeech) => (
             <p
               className="clickable"
-              onClick={() => props.setSelectedPartOfSpeech(partOfSpeech.category)}
             >
               {partOfSpeech.category}
             </p>

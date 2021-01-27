@@ -15,7 +15,7 @@ function App(props) {
 
   useEffect(() =>{
     axios.get('api/word_list/').then((res) => {
-      setWords(res.data.words);
+      setWords(res.data);
     });
   }, []);
 
@@ -39,7 +39,6 @@ function App(props) {
         setError={setError}
       />
       <List
-        filter={filter}
         selectedWord={selectedWord}
         setSelectedWord={setSelectedWord}
         words={words}

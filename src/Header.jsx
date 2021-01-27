@@ -22,7 +22,7 @@ function Header(props) {
         {props.error ? <p className="error">Error: {props.error}</p> : ''}
       </div>
       <div>
-        <input type="text" value={props.filter} onChange={(event) => props.setFilter(event.target.value.toLowerCase())}/>
+        <input type="text" value={props.filter} onChange={(event) => props.setFilter(event)}/>
         <button type="button" onClick={() => addNewWord()}>Add new word</button>
       </div>
       <div>
