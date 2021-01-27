@@ -15,7 +15,7 @@ function App(props) {
 
   useEffect(() =>{
     axios.get('api/word_list/').then((res) => {
-      setWords(res.data);
+      setWords(res.data.words);
     });
   }, []);
 
