@@ -34,50 +34,53 @@ def _convert_word(word):
 	"""Helper function to create/assign synonyms, antonyms, and parts of speech."""
 	dictionary = PyDictionary()
 
-	### create synonyms
-	# get the synonyms
-	synonyms = filter(_filter_words, dictionary.synonym(word.word))
-	synonym_through = Word.synonyms.through
-	synonym_objs =[]
-	# assign the synonyms
-	for synonym in synonyms:
-		synonym_objs.append(synonym_through(from_word=word, to_word=Word.objects.get_or_create(word=synonym)[0]))
-	# create the synonyms
-	synonym_through.objects.bulk_create(synonym_objs)
-
-	### create antonyms
-	# get the synonyms
-	antonyms = dictionary.antonym(word.word)
-	if antonyms:  # some words have no antonyms
-		antonym_through = Word.antonyms.through
-		antonym_objs = []
+	try:
+		### create synonyms
+		# get the synonyms
+		synonyms = filter(_filter_words, dictionary.synonym(word.word))
+		synonym_through = Word.synonyms.through
+		synonym_objs =[]
 		# assign the synonyms
-		for antonym in filter(_filter_words, antonyms):
-			antonym_objs.append(antonym_through(from_word=word, to_word=Word.objects.get_or_create(word=antonym)[0]))
+		for synonym in synonyms:
+			synonym_objs.append(synonym_through(from_word=word, to_word=Word.objects.get_or_create(word=synonym)[0]))
 		# create the synonyms
-		antonym_through.objects.bulk_create(antonym_objs)
+		synonym_through.objects.bulk_create(synonym_objs)
 
-	### most likely retrieve and assign parts of speech, but potentially create
-	pos_through = Word.part_of_speech.through
-	pos_through_objs = []
-	# get the parts of speech
-	pos = list(dictionary.meaning(word.word).keys())
-	# assign the parts fo speech
-	for part_of_speech in pos:
-		pos_through_objs.append(pos_through(word=word, partofspeech=PartOfSpeech.objects.get_or_create(category=part_of_speech)[0]))
-	# create the parts of speech
-	pos_through.objects.bulk_create(pos_through_objs)
+		### create antonyms
+		# get the synonyms
+		antonyms = dictionary.antonym(word.word)
+		if antonyms:  # some words have no antonyms
+			antonym_through = Word.antonyms.through
+			antonym_objs = []
+			# assign the synonyms
+			for antonym in filter(_filter_words, antonyms):
+				antonym_objs.append(antonym_through(from_word=word, to_word=Word.objects.get_or_create(word=antonym)[0]))
+			# create the synonyms
+			antonym_through.objects.bulk_create(antonym_objs)
 
-	### return the newly created word
-	word = Word.objects.get(id=word.id)
-	return JsonResponse({
-		'word': {
-			'word': word.word,
-			'synonyms': list(word.synonyms.values('id', 'word')),
-			'antonyms': list(word.antonyms.values('id', 'word')),
-			'part_of_speech': list(word.part_of_speech.values('id', 'category')),
-		}
-	})
+		### most likely retrieve and assign parts of speech, but potentially create
+		pos_through = Word.part_of_speech.through
+		pos_through_objs = []
+		# get the parts of speech
+		pos = list(dictionary.meaning(word.word).keys())
+		# assign the parts fo speech
+		for part_of_speech in pos:
+			pos_through_objs.append(pos_through(word=word, partofspeech=PartOfSpeech.objects.get_or_create(category=part_of_speech)[0]))
+		# create the parts of speech
+		pos_through.objects.bulk_create(pos_through_objs)
+
+		### return the newly created word
+		word = Word.objects.get(id=word.id)
+		return JsonResponse({
+			'word': {
+				'word': word.word,
+				'synonyms': list(word.synonyms.values('id', 'word')),
+				'antonyms': list(word.antonyms.values('id', 'word')),
+				'part_of_speech': list(word.part_of_speech.values('id', 'category')),
+			}
+		})
+	except TypeError:
+		return HttpResponseBadRequest("Something went wrong when coverting an existing word to a full word - most likely a fake word was passed in.")
 
 
 @csrf_exempt
