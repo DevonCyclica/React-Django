@@ -1,54 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 import "./List.less";
 
 function List(props) {
-  const [foos, setFoos] = useState(null);
-  const [selectedFoo, setSelectedFoo] = useState(null);
-  const [similarBars, setSimilarBars] = useState([]);
-  const [selectedBarId, setSelectedBarId] = useState(null);
-
-  useEffect(() =>{
-    axios.get('api/foo_list/').then((res) => {
-      setFoos(res.data);
+  const convertToRealWord = (word) => {
+    props.setError(null);
+    props.setLoading(true);
+    axios.post('api/convert_word/', {word: word.id}).then((res) => {
+      props.setLoading(false);
+      props.updateAndSelectWord(res.data.word);
+    }).catch((error) => {
+      props.setError(error.response.data);
+      props.setLoading(false);
     });
-  }, []);
-
-  const getSimilarBars = (barName, barId) => {
-    axios.get(`api/similar_bars/?barName=${barName}&reverse=${selectedBarId === barId ? 1 : 0}`).then((res) => {
-      setSimilarBars(res.data.bars);
-    });
-    setSelectedBarId(barId);
   };
+
+  const setSelectedSimilar = (word) => {
+    const filteredWord = props.words.filter((allWord) => allWord.id === word.id);
+    if (filteredWord.length > 0) {  // word already exists as full word
+      props.setSelectedWord(word);
+    } else {
+      convertToRealWord(word);
+    }
+  }
 
   return (
     <div className="list">
       <div>
         <div>
-          <p>All Foos</p>
+          <p>Words</p>
+          <p className="sub-header">Select Word to update other columns</p>
         </div>
         <div>
-          <p>Related Bars</p>
+          <p>Synonyms</p>
+          <p className="sub-header">Select Synonym to update selected word and potentially add to database</p>
         </div>
         <div>
-          <p>Similar Bars</p>
+          <p>Antonyms</p>
+          <p className="sub-header">Select Antonym to update selected word and potentially add to database</p>
+        </div>
+        <div>
+          <p>Part of speech</p>
+          <p className="sub-header">Select Part of Speech to filter Word column</p>
         </div>
       </div>
       <div>
         <div>
-          {foos.map((foo) => (
-            <p className="clickable" onClick={() => setSelectedFoo(foo.name)}>{foo.name}</p>
+          {props.words.filter( // filter by word filter
+            (word) => word.word.includes(props.filter)
+          ).filter( // filter by part of speech
+            (word) => word.part_of_speech.filter(
+              (partOfSpeech) => partOfSpeech.category === props.selectedPartOfSpeech || props.selectedPartOfSpeech === null
+            ).length > 0
+          ).map((word) => (
+            <p
+              className="clickable"
+              onClick={() => props.setSelectedWord(word)}
+            >
+              {word.word}
+            </p>
           ))}
         </div>
         <div>
-          {selectedFoo && selectedFoo.bars.map((bar) => (
-            <p className="clickable" onClick={() => getSimilarBars(bar.id, bar.name)}>{bar.name}-{bar.foo__name}</p>
+          {props.selectedWord && props.selectedWord.synonyms.map((word) => (
+            <p
+              className="clickable"
+              onClick={() => setSelectedSimilar(word)}
+            >
+              {word.word}
+            </p>
           ))}
         </div>
         <div>
-          {similarBars.map((bar) => (
-            <p>{bar.name}</p>
+          {props.selectedWord && props.selectedWord.antonyms.map((word) => (
+            <p
+              className="clickable"
+              onClick={() => setSelectedSimilar(word)}
+            >
+              {word.word}
+            </p>
+          ))}
+        </div>
+        <div>
+          {props.selectedWord && props.selectedWord.part_of_speech.map((partOfSpeech) => (
+            <p
+              className="clickable"
+            >
+              {partOfSpeech.category}
+            </p>
           ))}
         </div>
       </div>

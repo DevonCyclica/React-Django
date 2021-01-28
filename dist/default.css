@@ -1,3 +1,40 @@
 
+.header {
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.header .loading {
+  color: green;
+}
+.header .error {
+  color: red;
+}
+
+.list {
+  height: 95vh;
+}
+.list > div {
+  display: flex;
+  flex-direction: row;
+}
+.list > div > div {
+  width: 33.33333%;
+  overflow: scroll;
+  border: 3px solid black;
+  font-size: 26px;
+}
+.list > div > div p {
+  margin: 5px;
+}
+.list > div > div p.clickable:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.list > div > div p.sub-header {
+  font-size: 15px;
+}
+
 
 /*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJkZWZhdWx0LmNzcyIsInNvdXJjZVJvb3QiOiIifQ==*/
