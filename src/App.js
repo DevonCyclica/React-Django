@@ -15,7 +15,6 @@ function App(props) {
 
   useEffect(() =>{
     axios.get('api/word_list/').then((res) => {
-      console.log(res.data.words);
       setWords(res.data.words);
     });
   }, []);
@@ -48,6 +47,7 @@ function App(props) {
         setSelectedPartOfSpeech={setSelectedPartOfSpeech}
         setLoading={setLoading}
         setError={setError}
+        filter={filter}
       />
     </div>
   );
