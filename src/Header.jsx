@@ -17,7 +17,7 @@ function Header(props) {
   }
 
   const clearAllWords = () => {
-    axios.post('api/clear_all_words/', {secretCode: 'shhhhh'}).then((res) => {
+    axios.post('api/clear_all_words/', {}).then((res) => {
       props.setWords(res.data.words);
       props.setSelectedWord(null);
     });
