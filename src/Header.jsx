@@ -15,6 +15,14 @@ function Header(props) {
       props.setLoading(false);
     });
   }
+
+  const clearAllWords = () => {
+    axios.post('api/clear_all_words/', {secretCode: 'shhhhh'}).then((res) => {
+      props.setWords(res.data.words);
+      props.setSelectedWord(null);
+    });
+  }
+
   return (
     <div className="header">
       <div>
@@ -29,8 +37,7 @@ function Header(props) {
         Currently selected word: {props.selectedWord ? props.selectedWord.word : 'None'}
       </div>
       <div>
-        Currently selected part of speech: {props.selectedPartOfSpeech ? props.selectedPartOfSpeech : 'None'}
-        {props.selectedPartOfSpeech && <button type="button" onClick={() => props.setSelectedPartOfSpeech(null)}>Clear selected part of speech</button>}
+        <button type="button" onClick={() => clearAllWords()}>Clear all words</button>
       </div>
     </div>
   );

@@ -18,8 +18,8 @@ def word_list(request):
 		'words': [{
 			'word': word.word,
 			'synonyms': list(word.synonyms.values('id', 'word')),
-			'antonyms': list(word.synonyms.values('id', 'word')),
-			'part_of_speech': list(word.part_of_speech.values('id', 'category')),
+			'antonyms': [],
+			'id': word.id,
 		} for word in words]
 	})
 
@@ -73,9 +73,9 @@ def _convert_word(word):
 		return JsonResponse({
 			'word': {
 				'word': word.word,
-				'synonyms': list(word.synonyms.values('id', 'word')),
-				'antonyms': list(word.antonyms.values('id', 'word')),
-				'part_of_speech': list(word.part_of_speech.values('id', 'category')),
+				'synonyms': [],
+				'antonyms': [],
+				'id': word.id,
 			}
 		})
 	except TypeError:
@@ -111,3 +111,13 @@ def add_new_word(request):
 
 	# call _convert_word to handle the rest
 	return _convert_word(word)
+
+@csrf_exempt
+def clear_all_words(request):
+	"""Convert a word that only exists as a synonym/antonym into a fully fledged word."""
+	secret_code ='shhhhh'
+	if not json.loads(request.body).get('secretCode') == secret_code:
+		return JsonResponse({})
+	else:
+		Word.objects.all().delete()
+	return JsonResponse({ 'words': [] })
