@@ -8,7 +8,6 @@ from PyDictionary import PyDictionary
 
 def fill_models(apps, schema):
     Word = apps.get_model('sampleapp', 'Word')
-    PartOfSpeech = apps.get_model('sampleapp', 'PartOfSpeech')
 
     dictionary = PyDictionary()
 
@@ -19,35 +18,22 @@ def fill_models(apps, schema):
            return True
 
     words = ["hello", "goodbye", "life", "gargantuan", "run", "slow", "water", "imagination", "science", "realistic"]
-    parts_of_speech = set()
     word_objs = []
     word_id_map = {}
     i = 0
     pos_id_map = {}
     pos_objs = []
     for word in words:
-        word_objs.append(Word(word=word, id=i))
+        word_objs.append(Word(word=word, id=i, full_word=True))
         word_id_map[word] = i
 
         i += 1
 
-        parts_of_speech.update(list(dictionary.meaning(word).keys()))
-
-    for k, pos in enumerate(parts_of_speech):
-        if pos not in pos_id_map:
-            pos_objs.append(PartOfSpeech(category=pos, id=k))
-            pos_id_map[pos] = k
-
     synonym_through = Word.synonyms.through
-    antonym_through = Word.antonyms.through
-    pos_through = Word.part_of_speech.through
 
     synonym_objs = []
-    antonym_objs = []
-    pos_through_objs = []
 
     for word in words:
-        pos = list(dictionary.meaning(word).keys())
         synonyms = filter(myFunc, dictionary.synonym(word))
 
         for synonym in synonyms:
@@ -57,23 +43,8 @@ def fill_models(apps, schema):
                 i += 1
             synonym_objs.append(synonym_through(from_word_id=word_id_map[word], to_word_id=word_id_map[synonym]))
 
-        antonyms = dictionary.antonym(word)
-        if antonyms:
-            for antonym in filter(myFunc, antonyms):
-                if antonym not in word_id_map:
-                    word_objs.append(Word(word=antonym, id=i))
-                    word_id_map[antonym] = i
-                    i += 1
-                antonym_objs.append(antonym_through(from_word_id=word_id_map[word], to_word_id=word_id_map[antonym]))
-
-        for part_of_speech in pos:
-            pos_through_objs.append(pos_through(word_id=word_id_map[word], partofspeech_id=pos_id_map[part_of_speech]))
-
     Word.objects.bulk_create(word_objs)
-    PartOfSpeech.objects.bulk_create(pos_objs)
     synonym_through.objects.bulk_create(synonym_objs)
-    antonym_through.objects.bulk_create(antonym_objs)
-    pos_through.objects.bulk_create(pos_through_objs)
 
 
 class Migration(migrations.Migration):
@@ -85,19 +56,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='PartOfSpeech',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('category', models.CharField(max_length=50, unique=True)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Word',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('word', models.CharField(max_length=50, unique=True)),
-                ('antonyms', models.ManyToManyField(related_name='related_antonyms', to='sampleapp.Word')),
-                ('part_of_speech', models.ManyToManyField(to='sampleapp.partofspeech')),
+                ('full_word', models.BooleanField(default=False)),
                 ('synonyms', models.ManyToManyField(related_name='related_synonyms', to='sampleapp.Word')),
             ],
         ),

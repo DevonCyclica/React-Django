@@ -6,32 +6,31 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from PyDictionary import PyDictionary
 
-from sampleapp.models import PartOfSpeech, Word
+from sampleapp.models import Word
 
 # Create your views here.
 
 def word_list(request):
-	"""Get the list of all words (excluding words that only exist as antonyms/synonyms)."""
-	words = Word.objects.prefetch_related('synonyms', 'antonyms', 'part_of_speech').exclude(part_of_speech__isnull=True)
+	"""Get the list of all words (excluding words that only exist as synonyms)."""
+	words = Word.objects.prefetch_related('synonyms').filter(full_word=True)
 
 	return JsonResponse({
 		'words': [{
 			'word': word.word,
 			'synonyms': list(word.synonyms.values('id', 'word')),
-			'antonyms': [],
 			'id': word.id,
 		} for word in words]
 	})
 
 def _filter_words(x):
-	"""Helper function to filter antonyms/synonyms to only include unhyphenated, single-word words."""
+	"""Helper function to filter synonyms to only include unhyphenated, single-word words."""
 	if x.count(' ') or x.count('-'):
 		return False
 	else:
 		return True
 
 def _convert_word(word):
-	"""Helper function to create/assign synonyms, antonyms, and parts of speech."""
+	"""Helper function to create/assign synonyms."""
 	dictionary = PyDictionary()
 
 	try:
@@ -46,45 +45,24 @@ def _convert_word(word):
 		# create the synonyms
 		synonym_through.objects.bulk_create(synonym_objs)
 
-		### create antonyms
-		# get the synonyms
-		antonyms = dictionary.antonym(word.word)
-		if antonyms:  # some words have no antonyms
-			antonym_through = Word.antonyms.through
-			antonym_objs = []
-			# assign the synonyms
-			for antonym in filter(_filter_words, antonyms):
-				antonym_objs.append(antonym_through(from_word=word, to_word=Word.objects.get_or_create(word=antonym)[0]))
-			# create the synonyms
-			antonym_through.objects.bulk_create(antonym_objs)
-
-		### most likely retrieve and assign parts of speech, but potentially create
-		pos_through = Word.part_of_speech.through
-		pos_through_objs = []
-		# get the parts of speech
-		pos = list(dictionary.meaning(word.word).keys())
-		# assign the parts fo speech
-		for part_of_speech in pos:
-			pos_through_objs.append(pos_through(word=word, partofspeech=PartOfSpeech.objects.get_or_create(category=part_of_speech)[0]))
-		# create the parts of speech
-		pos_through.objects.bulk_create(pos_through_objs)
+		word.full_word = True
+		word.save()
 
 		### return the newly created word
 		return JsonResponse({
 			'word': {
 				'word': word.word,
 				'synonyms': [],
-				'antonyms': [],
 				'id': word.id,
 			}
 		})
 	except TypeError:
-		return HttpResponseBadRequest("Something went wrong when coverting an existing word to a full word - most likely a fake word was passed in.")
+		return HttpResponseBadRequest("Something went wrong when converting an existing word to a full word - most likely a fake word was passed in.")
 
 
 @csrf_exempt
 def convert_word(request):
-	"""Convert a word that only exists as a synonym/antonym into a fully fledged word."""
+	"""Convert a word that only exists as a synonym into a fully fledged word."""
 	try:  # retrieve word
 		word = Word.objects.get(id=json.loads(request.body)['word'])
 	except DoesNotExist:
@@ -114,7 +92,7 @@ def add_new_word(request):
 
 @csrf_exempt
 def clear_all_words(request):
-	"""Convert a word that only exists as a synonym/antonym into a fully fledged word."""
+	"""Delete all words."""
 	secret_code ='shhhhh'
 	if not json.loads(request.body).get('secretCode') == secret_code:
 		return JsonResponse({})
